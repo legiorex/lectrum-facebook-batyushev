@@ -1,7 +1,7 @@
 {
-    "@lectrum/generator-ui": {
-        "initialized": false,
-        "educational": true,
-        "repositoryOwner": "lectrum"
-    }
+  "@lectrum/generator-ui": {
+    "initialized": true,
+    "educational": true,
+    "repositoryOwner": "lectrum"
+  }
 }
