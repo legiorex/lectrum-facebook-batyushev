@@ -1,5 +1,6 @@
 //Core
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 // Components
 import StatusBar from 'components/StatusBar';
@@ -10,6 +11,12 @@ import Post from 'components/Post';
 import Styles from './styles.m.css';
 
 class Feed extends Component {
+    static propTypes = {
+        currentUserFirstName: PropTypes.string,
+        currentUserLastName:  PropTypes.string,
+        avatar:               PropTypes.string,
+    };
+
     render() {
         const { avatar, currentUserFirstName, currentUserLastName } = this.props;
 

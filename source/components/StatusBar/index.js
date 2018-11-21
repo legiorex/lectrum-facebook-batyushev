@@ -1,18 +1,25 @@
 //Core
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 // Instrumens
 import Styles from './styles.m.css';
 
 class StatusBar extends Component {
+    static propTypes = {
+        currentUserFirstName: PropTypes.string,
+        currentUserLastName:  PropTypes.string,
+        avatar:               PropTypes.string,
+    };
+
     render() {
         const { avatar, currentUserFirstName, currentUserLastName } = this.props;
 
         return (
-            < section className = { Styles.statusBar }>
+            <section className = { Styles.statusBar }>
                 <button>
                     <img src = { avatar } />
                     <span>{currentUserFirstName}</span>
-              &nbsp;
+                    &nbsp;
                     <span>{currentUserLastName}</span>
                 </button>
             </section>
