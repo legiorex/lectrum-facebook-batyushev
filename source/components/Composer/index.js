@@ -7,12 +7,12 @@ import Styles from './styles.m.css';
 class Composer extends Component {
     static propTypes = {
         currentUserFirstName: PropTypes.string.isRequired,
-        currentUserLastName:  PropTypes.string.isRequired,
+        currentUserLastName:  PropTypes.string,
         avatar:               PropTypes.string.isRequired,
     };
 
     render() {
-        const { avatar, currentUserFirstName, currentUserLastName } = this.props;
+        const { avatar, currentUserFirstName, currentUserLastName = null } = this.props;
 
         return (
             <section className = { Styles.composer }>
