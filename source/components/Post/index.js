@@ -8,9 +8,9 @@ import Styles from './styles.m.css';
 
 class Post extends Component {
     static propTypes = {
-        currentUserFirstName: PropTypes.string,
-        currentUserLastName:  PropTypes.string,
-        avatar:               PropTypes.string,
+        currentUserFirstName: PropTypes.string.isRequired,
+        currentUserLastName:  PropTypes.string.isRequired,
+        avatar:               PropTypes.string.isRequired,
     };
 
     render() {
