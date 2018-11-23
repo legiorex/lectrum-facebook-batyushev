@@ -9,8 +9,9 @@ import Styles from './styles.m.css';
 class Post extends Component {
     static propTypes = {
         comment: PropTypes.string.isRequired,
-        created: PropTypes.number.isRequired
+        created: PropTypes.number.isRequired,
     }
+
     render() {
         const { comment, created } = this.props;
 
