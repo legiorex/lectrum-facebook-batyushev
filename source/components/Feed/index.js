@@ -28,7 +28,7 @@ class Feed extends Component {
     };
 
     render() {
-        const { posts, isSpinning} = this.state;
+        const { posts, isSpinning } = this.state;
 
         const postsJSX = posts.map((post) => {
             return (
@@ -40,14 +40,9 @@ class Feed extends Component {
         });
 
 
-        const spinnerJSX = () => {
-            return isSpinning ? <Spinner isSpinning /> : null;
-        };
-
-
         return (
             <section className = { Styles.feed }>
-                {spinnerJSX()}
+                <Spinner isSpinning = { isSpinning } />
                 <StatusBar />
                 <Composer />
                 {postsJSX}

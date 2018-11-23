@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 const portal = document.getElementById('spinner');
 
 class Spinner extends Component {
-    static PropTypes = {
+    static propTypes = {
         isSpinning: PropTypes.bool.isRequired,
     }
 
