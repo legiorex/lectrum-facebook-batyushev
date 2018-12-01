@@ -1,122 +1,126 @@
 //Core
-import React, { Component } from 'react';
-import moment from 'moment';
-
+import React, { Component } from "react";
 
 // Components
-import { withProfile } from 'components/HOC/withProfile';
-import StatusBar from 'components/StatusBar';
-import Composer from 'components/Composer';
-import Post from 'components/Post';
-import Spinner from 'components/Spinner';
+import Catcher from "components/Catcher";
+import { withProfile } from "components/HOC/withProfile";
+import StatusBar from "components/StatusBar";
+import Composer from "components/Composer";
+import Post from "components/Post";
+import Spinner from "components/Spinner";
 
 // Instruments
-import Styles from './styles.m.css';
-import { getUniqueID, delay } from 'instruments';
+import Styles from "./styles.m.css";
+import { getUniqueID, delay } from "instruments";
+import { api, TOKEN } from "config/api";
 
 @withProfile
 export default class Feed extends Component {
-    
-
     state = {
-        posts: [
-            {
-                id:      'it14f',
-                comment: 'Привет!',
-                created: moment.utc(),
-                likes:   [],
-            },
-            {
-                id:      '152',
-                comment: 'Я тут',
-                created: moment.utc(),
-                likes:   [],
-            },
-        ],
+        posts: [],
         isSpinning: false,
     };
+
+    componentDidMount() {
+        this._fetchPosts();
+        this.refetch = setInterval(this._fetchPosts, 1000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.refetch)
+    }
 
     _setPostFetchingState = (state) => {
         this.setState({
             isSpinning: state,
         });
-    }
+    };
+    _fetchPosts = async () => {
+        this._setPostFetchingState(true);
 
+        const response = await fetch(api, {
+            method: "GET",
+        });
+
+        const { data: posts } = await response.json();
+
+        this.setState({
+            posts,
+            isSpinning: false,
+        });
+    };
     _createPost = async (comment) => {
         this._setPostFetchingState(true);
-        const post = {
-            id:      getUniqueID(),
-            created: moment.utc(),
-            comment,
-            likes:   [],
-        };
-        await delay(1200);
+        const response = await fetch(api, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: TOKEN,
+            },
+            body: JSON.stringify({ comment }),
+        });
+
+        const { data: post } = await response.json();
+
         this.setState(({ posts }) => ({
-            posts:      [ post, ...posts ],
+            posts: [post, ...posts],
             isSpinning: false,
         }));
-    }
+    };
 
     _likePost = async (id) => {
-        const { currentUserFirstName, currentUserLastName } = this.props;
         this._setPostFetchingState(true);
 
-        await delay(1200);
-
-        const newPosts = this.state.posts.map((post) => {
-            if (post.id === id) {
-                return {
-                    ...post,
-                    likes: [
-                        {
-                            id:        getUniqueID(),
-                            firstName: currentUserFirstName,
-                            lastName:  currentUserLastName,
-                        },
-                    ],
-                };
-            }
-
-            return post;
+        const response = await fetch(`${api}/${id}`, {
+            method: "PUT",
+            headers: {
+                Authorization: TOKEN,
+            },
         });
-        this.setState({
-            posts:      newPosts,
+        const { data: likedPost } = await response.json();
+        this.setState(({ posts }) => ({
+            posts: posts.map((post) => (post.id === likedPost.id ? likedPost : post)),
             isSpinning: false,
-        });
-    }
+        }));
+    };
 
     _removePost = async (id) => {
         this._setPostFetchingState(true);
-        await delay(1200);
+
+        const response = await fetch(`${api}/${id}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: TOKEN,
+            },
+        });
+
+       
         const newPosts = this.state.posts.filter((post) => {
             return post.id !== id;
         });
 
         this.setState({
-            posts:      newPosts,
+            posts: newPosts,
             isSpinning: false,
         });
-    }
+    };
 
     render() {
         const { posts, isSpinning } = this.state;
 
         const postsJSX = posts.map((post) => {
             return (
-                <Post
-                    key = { post.id }
-                    { ...post }
-                    _likePost = { this._likePost }
-                    _removePost = { this._removePost }
-                />
+                <Catcher key={post.id}>
+                    <Post {...post} _likePost={this._likePost} _removePost={this._removePost} />
+                </Catcher>
             );
         });
 
         return (
-            <section className = { Styles.feed }>
-                <Spinner isSpinning = { isSpinning } />
+            <section className={Styles.feed}>
+                <Spinner isSpinning={isSpinning} />
                 <StatusBar />
-                <Composer _createPost = { this._createPost } />
+                <Composer _createPost={this._createPost} />
                 {postsJSX}
             </section>
         );
