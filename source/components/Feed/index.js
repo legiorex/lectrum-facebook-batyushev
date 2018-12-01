@@ -11,8 +11,8 @@ import Spinner from "components/Spinner";
 
 // Instruments
 import Styles from "./styles.m.css";
-import { getUniqueID, delay } from "instruments";
-import { api, TOKEN } from "config/api";
+import { api, TOKEN, GROUP_ID } from "config/api";
+import { socket } from "socket/init";
 
 @withProfile
 export default class Feed extends Component {
@@ -22,12 +22,53 @@ export default class Feed extends Component {
     };
 
     componentDidMount() {
+        const { currentUserFirstName, currentUserLastName } = this.props;
         this._fetchPosts();
-        this.refetch = setInterval(this._fetchPosts, 1000);
+
+        socket.emit("join", GROUP_ID);
+        socket.on("create", (postJSON) => {
+            const { data: createdPost, meta } = JSON.parse(postJSON);
+
+            if (
+                `${currentUserFirstName} ${currentUserLastName}` !==
+                `${meta.authorFirstName} ${meta.authorLastName}`
+            ) {
+                this.setState(({ posts }) => ({
+                    posts: [createdPost, ...posts],
+                }));
+            }
+        });
+        socket.on("remove", (postJSON) => {
+            const { data: removedPost, meta } = JSON.parse(postJSON);
+
+            if (
+                `${currentUserFirstName} ${currentUserLastName}` !==
+                `${meta.authorFirstName} ${meta.authorLastName}`
+            ) {
+                this.setState(({ posts }) => ({
+                    posts: posts.map.filter((post) => post.id !== removedPost.id),
+                }));
+            }
+        });
+        socket.on("like", (postJSON) => {
+            const { data: likedPost, meta } = JSON.parse(postJSON);
+            console.log(likedPost);
+            console.log(meta);
+            if (
+                `${currentUserFirstName} ${currentUserLastName}` !==
+                `${meta.authorFirstName} ${meta.authorLastName}`
+            ) {
+                this.setState(({ posts }) => ({
+                    posts: [likedPost, ...posts],
+                }));
+            }            
+        });
     }
 
-    componentWillUnmount(){
-        clearInterval(this.refetch)
+    componentWillUnmount() {
+        socket.removeListener("create");
+        socket.removeListener("remove");
+        socket.removeListener("like");
     }
 
     _setPostFetchingState = (state) => {
@@ -87,14 +128,13 @@ export default class Feed extends Component {
     _removePost = async (id) => {
         this._setPostFetchingState(true);
 
-        const response = await fetch(`${api}/${id}`, {
+        await fetch(`${api}/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: TOKEN,
             },
         });
 
-       
         const newPosts = this.state.posts.filter((post) => {
             return post.id !== id;
         });
