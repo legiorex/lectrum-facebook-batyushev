@@ -58,8 +58,10 @@ export default class Feed extends Component {
                 `${currentUserFirstName} ${currentUserLastName}` !==
                 `${meta.authorFirstName} ${meta.authorLastName}`
             ) {
+
                 this.setState(({ posts }) => ({
-                    posts: [likedPost, ...posts],
+                    posts: posts.map((post) => (post.id === likedPost.id ? likedPost : post)),
+                    isSpinning: false,
                 }));
             }            
         });
