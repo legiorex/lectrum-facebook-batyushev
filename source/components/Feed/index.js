@@ -1,6 +1,6 @@
 //Core
 import React, { Component } from "react";
-import { Transition } from "react-transition-group";
+import { Transition, CSSTransition, TransitionGroup } from "react-transition-group";
 import { fromTo } from "gsap";
 
 // Components
@@ -149,7 +149,7 @@ export default class Feed extends Component {
         });
     };
     _animateComposerEnter = (composer) => {
-        fromTo(composer, 1, {opacity: 0, rotationX: 50 }, {opacity: 1, rotationX: 0});
+        fromTo(composer, 1, { opacity: 0, rotationX: 50 }, { opacity: 1, rotationX: 0 });
     };
 
     render() {
@@ -157,9 +157,25 @@ export default class Feed extends Component {
 
         const postsJSX = posts.map((post) => {
             return (
-                <Catcher key={post.id}>
-                    <Post {...post} _likePost={this._likePost} _removePost={this._removePost} />
-                </Catcher>
+                <CSSTransition
+                    key={post.id}
+                    classNames={{
+                        enter: Styles.postInStart,
+                        enterActive: Styles.postInEnd,
+                        exit: Styles.postOutStart,
+                        exitActive: Styles.postOutEnd,
+                    }}
+                    timeout={{
+                        enter: 500,
+                        exit: 400,
+                    }}>
+                    <Catcher>
+                        <TransitionGroup>
+                            <Post {...post} _likePost={this._likePost} _removePost={this._removePost} />
+                        </TransitionGroup>
+                        
+                    </Catcher>
+                </CSSTransition>
             );
         });
 
@@ -170,8 +186,8 @@ export default class Feed extends Component {
                 <Transition appear in onEnter={this._animateComposerEnter} timeout={1000}>
                     <Composer _createPost={this._createPost} />
                 </Transition>
-                <Postman/>
-                {postsJSX}
+                <Postman />
+                <TransitionGroup> {postsJSX} </TransitionGroup>
             </section>
         );
     }
