@@ -1,5 +1,7 @@
 //Core
 import React, { Component } from "react";
+import { Transition } from "react-transition-group";
+import { fromTo } from "gsap";
 
 // Components
 import Catcher from "components/Catcher";
@@ -8,6 +10,7 @@ import StatusBar from "components/StatusBar";
 import Composer from "components/Composer";
 import Post from "components/Post";
 import Spinner from "components/Spinner";
+import Postman from "components/Postman";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -58,12 +61,11 @@ export default class Feed extends Component {
                 `${currentUserFirstName} ${currentUserLastName}` !==
                 `${meta.authorFirstName} ${meta.authorLastName}`
             ) {
-
                 this.setState(({ posts }) => ({
                     posts: posts.map((post) => (post.id === likedPost.id ? likedPost : post)),
                     isSpinning: false,
                 }));
-            }            
+            }
         });
     }
 
@@ -146,6 +148,9 @@ export default class Feed extends Component {
             isSpinning: false,
         });
     };
+    _animateComposerEnter = (composer) => {
+        fromTo(composer, 1, {opacity: 0, rotationX: 50 }, {opacity: 1, rotationX: 0});
+    };
 
     render() {
         const { posts, isSpinning } = this.state;
@@ -162,7 +167,10 @@ export default class Feed extends Component {
             <section className={Styles.feed}>
                 <Spinner isSpinning={isSpinning} />
                 <StatusBar />
-                <Composer _createPost={this._createPost} />
+                <Transition appear in onEnter={this._animateComposerEnter} timeout={1000}>
+                    <Composer _createPost={this._createPost} />
+                </Transition>
+                <Postman/>
                 {postsJSX}
             </section>
         );
