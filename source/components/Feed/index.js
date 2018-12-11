@@ -55,8 +55,7 @@ export default class Feed extends Component {
         });
         socket.on("like", (postJSON) => {
             const { data: likedPost, meta } = JSON.parse(postJSON);
-            console.log(likedPost);
-            console.log(meta);
+           
             if (
                 `${currentUserFirstName} ${currentUserLastName}` !==
                 `${meta.authorFirstName} ${meta.authorLastName}`
@@ -149,7 +148,15 @@ export default class Feed extends Component {
         });
     };
     _animateComposerEnter = (composer) => {
-        fromTo(composer, 1, {opacity: 0, rotationX: 50 }, {opacity: 1, rotationX: 0});
+        fromTo(composer, 1, { opacity: 0, rotationX: 50 }, { opacity: 1, rotationX: 0 });
+    };
+
+    _animatePostmanEntered = (postman) => {
+        fromTo(postman, 3, { opacity: 1, x: 0 }, { opacity: 0, x: 300 });
+    };
+
+    _animatePostmanEnter = (postman) => {
+        fromTo(postman, 3, { opacity: 0, x: 300 }, { opacity: 1, x: 0 });
     };
 
     render() {
@@ -167,10 +174,24 @@ export default class Feed extends Component {
             <section className={Styles.feed}>
                 <Spinner isSpinning={isSpinning} />
                 <StatusBar />
-                <Transition appear in onEnter={this._animateComposerEnter} timeout={1000}>
+                <Transition
+                    appear
+                    in
+                    onEnter={this._animateComposerEnter}                    
+                    timeout={1000}>
                     <Composer _createPost={this._createPost} />
                 </Transition>
-                <Postman/>
+                <Transition
+                    appear
+                    in
+                    onEnter={this._animatePostmanEnter}
+                    onEntered={this._animatePostmanEntered}
+                    timeout={4000}
+                    >
+                
+                <Postman />
+                </Transition>
+
                 {postsJSX}
             </section>
         );
