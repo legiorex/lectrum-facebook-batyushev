@@ -151,6 +151,14 @@ export default class Feed extends Component {
     _animateComposerEnter = (composer) => {
         fromTo(composer, 1, { opacity: 0, rotationX: 50 }, { opacity: 1, rotationX: 0 });
     };
+    _animatePostmanEntered = (postman) => {
+        console.log("test");
+
+        fromTo(postman, 3, { opacity: 1, x: 0 }, { opacity: 0, x: 300 });
+    };
+    _animatePostmanEnter = (postman) => {
+        fromTo(postman, 3, { opacity: 0, x: 300 }, { opacity: 1, x: 0 });
+    };
 
     render() {
         const { posts, isSpinning } = this.state;
@@ -170,10 +178,13 @@ export default class Feed extends Component {
                         exit: 400,
                     }}>
                     <Catcher>
-                        <TransitionGroup>
-                            <Post {...post} _likePost={this._likePost} _removePost={this._removePost} />
-                        </TransitionGroup>
-                        
+                        <Transition>
+                            <Post
+                                {...post}
+                                _likePost={this._likePost}
+                                _removePost={this._removePost}
+                            />
+                        </Transition>
                     </Catcher>
                 </CSSTransition>
             );
@@ -186,7 +197,14 @@ export default class Feed extends Component {
                 <Transition appear in onEnter={this._animateComposerEnter} timeout={1000}>
                     <Composer _createPost={this._createPost} />
                 </Transition>
-                <Postman />
+                <Transition
+                    appear
+                    in
+                    onEnter={this._animatePostmanEnter}
+                    onEntered={this._animatePostmanEntered}
+                    timeout={4000}>
+                    <Postman />
+                </Transition>
                 <TransitionGroup> {postsJSX} </TransitionGroup>
             </section>
         );
