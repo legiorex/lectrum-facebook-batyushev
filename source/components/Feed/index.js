@@ -178,13 +178,13 @@ export default class Feed extends Component {
                         exit: 400,
                     }}>
                     <Catcher>
-                        <Transition>
+                        
                             <Post
                                 {...post}
                                 _likePost={this._likePost}
                                 _removePost={this._removePost}
                             />
-                        </Transition>
+                       
                     </Catcher>
                 </CSSTransition>
             );
