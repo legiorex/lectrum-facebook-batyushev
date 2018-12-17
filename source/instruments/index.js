@@ -39,3 +39,4 @@ export const getFullApiUrl = (api, GROUP_ID) => {
 
     return `${api}/${GROUP_ID}`;
 };
+
