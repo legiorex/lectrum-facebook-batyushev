@@ -11,6 +11,7 @@ import Composer from "components/Composer";
 import Post from "components/Post";
 import Spinner from "components/Spinner";
 import Postman from "components/Postman";
+import Counter from "components/Counter";
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -203,6 +204,7 @@ export default class Feed extends Component {
                     onEnter={this._animatePostmanEnter}
                     onEntered={this._animatePostmanEntered}
                     timeout={4000}>
+                    <Counter/>
                     <Postman />
                 </Transition>
                 <TransitionGroup> {postsJSX} </TransitionGroup>
