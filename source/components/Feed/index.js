@@ -55,9 +55,7 @@ export default class Feed extends Component {
             }
         });
         socket.on("like", (postJSON) => {
-            const { data: likedPost, meta } = JSON.parse(postJSON);
-            console.log(likedPost);
-            console.log(meta);
+            const { data: likedPost, meta } = JSON.parse(postJSON);            
             if (
                 `${currentUserFirstName} ${currentUserLastName}` !==
                 `${meta.authorFirstName} ${meta.authorLastName}`
@@ -152,9 +150,7 @@ export default class Feed extends Component {
     _animateComposerEnter = (composer) => {
         fromTo(composer, 1, { opacity: 0, rotationX: 50 }, { opacity: 1, rotationX: 0 });
     };
-    _animatePostmanEntered = (postman) => {
-        console.log("test");
-
+    _animatePostmanEntered = (postman) => {       
         fromTo(postman, 3, { opacity: 1, x: 0 }, { opacity: 0, x: 300 });
     };
     _animatePostmanEnter = (postman) => {
@@ -179,13 +175,7 @@ export default class Feed extends Component {
                         exit: 400,
                     }}>
                     <Catcher>
-                        
-                            <Post
-                                {...post}
-                                _likePost={this._likePost}
-                                _removePost={this._removePost}
-                            />
-                       
+                        <Post {...post} _likePost={this._likePost} _removePost={this._removePost} />
                     </Catcher>
                 </CSSTransition>
             );
@@ -195,7 +185,11 @@ export default class Feed extends Component {
             <section className={Styles.feed}>
                 <Spinner isSpinning={isSpinning} />
                 <StatusBar />
-                <Transition appear in onEnter={this._animateComposerEnter} timeout={1000}>
+                <Transition 
+                    appear 
+                    in 
+                    onEnter={this._animateComposerEnter} 
+                    timeout={1000}>
                     <Composer _createPost={this._createPost} />
                 </Transition>
                 <Transition
@@ -204,9 +198,10 @@ export default class Feed extends Component {
                     onEnter={this._animatePostmanEnter}
                     onEntered={this._animatePostmanEntered}
                     timeout={4000}>
-                    <Counter/>
                     <Postman />
                 </Transition>
+                <Counter count={postsJSX.length}/>
+
                 <TransitionGroup> {postsJSX} </TransitionGroup>
             </section>
         );
