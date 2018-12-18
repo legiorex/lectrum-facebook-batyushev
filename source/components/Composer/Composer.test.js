@@ -55,5 +55,26 @@ describe('composer component:', () => {
         });
         expect(result.state()).toEqual(updatedState);
         expect(result.find('textarea').text()).toBe(comment);
+        result.setState({
+            comment: '',
+        });
+        expect(result.state()).toEqual(initialState);
+        expect(result.find('textarea').text()).toBe('');
+    });
+
+    test('should handle textarea "change" event', () => {
+        result.find('textarea').simulate('change', {
+            target: {
+                value: comment,
+            },
+        });
+        expect(result.find('textarea').text()).toBe(comment);
+        expect(result.state()).toEqual(updatedState);
+    });
+
+    test('should handle form "submit" event', () => {
+        result.find('form').simulate('submit');
+
+        expect(result.state()).toEqual(initialState);
     });
 });
