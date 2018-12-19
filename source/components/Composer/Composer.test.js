@@ -2,11 +2,14 @@ import React from 'react';
 import { mount, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { Composer } from './';
+import renderer from 'react-test-renderer';
 
 configure({ adapter: new Adapter() });
 
 const props = {
     _createPost: jest.fn(),
+    avatar: '',
+    currentUserFirstName: '',
 };
 
 const comment = 'Merry christmas!';
@@ -19,7 +22,16 @@ const updatedState = {
     comment,
 };
 
+const renderTree = renderer.create(<Composer count = { 3 } />).toJSON();
+
 const result = mount(<Composer { ...props } />);
+
+
+const _submitCommentSpy = jest.spyOn(result.instance(), '_submitComment');
+const _handleFormSubmitSpy = jest.spyOn(result.instance(), '_handleFormSubmit');
+const _updateCommentSpy = jest.spyOn(result.instance(), '_updateComment');
+// const _submitOnEnterSpy = jest.spyOn(result.instance(), '_submitOnEnter');
+
 describe('composer component:', () => {
     test('should have 1 "section" element', () => {
         expect(result.find('section')).toHaveLength(1);
@@ -77,4 +89,58 @@ describe('composer component:', () => {
 
         expect(result.state()).toEqual(initialState);
     });
+
+
+    test('_createPost prop should be invoked once after form submission', () => {
+        
+        expect(props._createPost).toBeCalledTimes(1);
+    });
+
+
+    test('_submitComment, _handleFormSubmitSpy, _updateCommentSpy,  class methods should be invoke once after form in submitted', () => {
+        
+        expect(_submitCommentSpy).toBeCalledTimes(1);
+        expect(_handleFormSubmitSpy).toBeCalledTimes(1);
+        expect(_updateCommentSpy).toBeCalledTimes(1);
+        
+    });
+
+    test("должен менять свойство состояния state.comment текстовым контентом, будучи вызванным в качестве обработчика события onChange", () => {
+        result.instance()._updateComment({
+            
+            target: {
+                value: '123',
+            },
+            
+        });
+        expect(result.state("comment")).toBe("123");
+
+        
+    });
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    test('composer component should correspond to its snapshot composerpart', () => {
+        expect(renderTree).toMatchSnapshot();
+    });
+    
+
 });
+
+
