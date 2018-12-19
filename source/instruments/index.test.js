@@ -32,7 +32,7 @@ describe('instruments:', () => {
     test('getUniqueID function should produce a string of a desired given length', () => {
         expect(typeof getUniqueID()).toBe('string');
         expect(getUniqueID(5)).toHaveLength(5);
-        expect(getUniqueID(13)).toHaveLength(13);
+        expect(getUniqueID(15)).toHaveLength(15);
     });
 
     test('getFullApiUrl function should be a function', () => {
