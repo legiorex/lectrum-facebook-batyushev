@@ -4,14 +4,16 @@ exports[`composer component: composer component should correspond to its snapsho
 <section
   className="composer"
 >
-  <img />
+  <img
+    src=""
+  />
   <form
     onSubmit={[Function]}
   >
     <textarea
       onChange={[Function]}
       onKeyPress={[Function]}
-      placeholder=" What's on your mind, undefined?"
+      placeholder=" What's on your mind, ?"
       value=""
     />
     <input

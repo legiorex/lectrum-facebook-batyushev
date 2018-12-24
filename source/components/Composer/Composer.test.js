@@ -7,8 +7,8 @@ import renderer from 'react-test-renderer';
 configure({ adapter: new Adapter() });
 
 const props = {
-    _createPost: jest.fn(),
-    avatar: '',
+    _createPost:          jest.fn(),
+    avatar:               '',
     currentUserFirstName: '',
 };
 
@@ -22,15 +22,12 @@ const updatedState = {
     comment,
 };
 
-const renderTree = renderer.create(<Composer count = { 3 } />).toJSON();
-
 const result = mount(<Composer { ...props } />);
-
+const renderTree = renderer.create(<Composer { ...props } />).toJSON();
 
 const _submitCommentSpy = jest.spyOn(result.instance(), '_submitComment');
 const _handleFormSubmitSpy = jest.spyOn(result.instance(), '_handleFormSubmit');
 const _updateCommentSpy = jest.spyOn(result.instance(), '_updateComment');
-// const _submitOnEnterSpy = jest.spyOn(result.instance(), '_submitOnEnter');
 
 describe('composer component:', () => {
     test('should have 1 "section" element', () => {
@@ -90,57 +87,53 @@ describe('composer component:', () => {
         expect(result.state()).toEqual(initialState);
     });
 
-
     test('_createPost prop should be invoked once after form submission', () => {
-        
         expect(props._createPost).toBeCalledTimes(1);
     });
 
-
     test('_submitComment, _handleFormSubmitSpy, _updateCommentSpy,  class methods should be invoke once after form in submitted', () => {
-        
-        expect(_submitCommentSpy).toBeCalledTimes(1);
         expect(_handleFormSubmitSpy).toBeCalledTimes(1);
         expect(_updateCommentSpy).toBeCalledTimes(1);
-        
+
+        jest.clearAllMocks();
     });
 
-    test("должен менять свойство состояния state.comment текстовым контентом, будучи вызванным в качестве обработчика события onChange", () => {
+    test('_submitComment should return if there is no comment in state', () => {
+        result.setState(initialState);
+        result.instance()._submitComment();
+
+        expect(_submitCommentSpy).toBeCalledTimes(1);
+        expect(_submitCommentSpy).toHaveReturnedWith(null);
+
+        jest.clearAllMocks();
+    });
+
+    test('должен менять свойство состояния state.comment текстовым контентом, будучи вызванным в качестве обработчика события onChange', () => {
         result.instance()._updateComment({
-            
             target: {
                 value: '123',
             },
-            
         });
-        expect(result.state("comment")).toBe("123");
-
-        
+        expect(result.state('comment')).toBe('123');
     });
 
-    
+    test('_submitOnEnter should be called when Enter key is pressed in textarea', () => {
+        result.find('textarea').simulate('keypress', {
+            key: 'w',
+        });
 
+        expect(_submitCommentSpy).toBeCalledTimes(0);
+    });
 
+    test('_submitOnEnter should not be called when w key is pressed in textarea', () => {
+        result.find('textarea').simulate('keypress', {
+            key: 'Enter',
+        });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        expect(_submitCommentSpy).toBeCalledTimes(1);
+    });
 
     test('composer component should correspond to its snapshot composerpart', () => {
         expect(renderTree).toMatchSnapshot();
     });
-    
-
 });
-
-
