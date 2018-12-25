@@ -1,12 +1,13 @@
 //Core
-import React, { Component } from "react";
-import { Transition } from "react-transition-group";
-import { fromTo } from "gsap";
-import { withProfile } from "components/HOC/withProfile";
-import cx from "classnames";
+import React, { Component } from 'react';
+import { Transition } from 'react-transition-group';
+import { fromTo } from 'gsap';
+import { withProfile } from 'components/HOC/withProfile';
+import { Link } from 'react-router-dom';
+import cx from 'classnames';
 // Instruments
-import Styles from "./styles.m.css";
-import { socket } from "socket/init";
+import Styles from './styles.m.css';
+import { socket } from 'socket/init';
 
 @withProfile
 export default class StatusBar extends Component {
@@ -15,13 +16,13 @@ export default class StatusBar extends Component {
     };
 
     componentDidMount() {
-        socket.on("connect", () => {
+        socket.on('connect', () => {
             this.setState({
                 online: true,
             });
         });
 
-        socket.on("disconnect", () => {
+        socket.on('disconnect', () => {
             this.setState({
                 online: false,
             });
@@ -29,12 +30,12 @@ export default class StatusBar extends Component {
     }
 
     componentWillUnmount() {
-        socket.removeListener("connect");
-        socket.removeListener("disconnect");
+        socket.removeListener('connect');
+        socket.removeListener('disconnect');
     }
 
     _animateStatusBarEnter = (statusBar) => {
-        fromTo(statusBar, 1, {opacity: 0 }, {opacity: 1 });
+        fromTo(statusBar, 1, { opacity: 0 }, { opacity: 1 });
     };
 
     render() {
@@ -45,24 +46,20 @@ export default class StatusBar extends Component {
             [Styles.offline]: !online,
         });
 
-        const statusMessage = online ? "Online" : "Offline";
+        const statusMessage = online ? 'Online' : 'Offline';
         return (
-            <Transition 
-            appear 
-            in 
-            timeout = {1000} 
-            onEnter = {this._animateStatusBarEnter}>
+            <Transition appear in timeout={1000} onEnter={this._animateStatusBarEnter}>
                 <section className={Styles.statusBar}>
                     <div className={statusStyle}>
                         <div>{statusMessage}</div>
                         <span />
                     </div>
-                    <button>
+                    <Link to="/profile">
                         <img src={avatar} />
                         <span>{currentUserFirstName}</span>
-                        &nbsp;
-                        <span>{currentUserLastName}</span>
-                    </button>
+                    </Link>
+                    <Link to="/feed">Feed</Link>
+                    <Link to="/login">Login</Link>
                 </section>
             </Transition>
         );
